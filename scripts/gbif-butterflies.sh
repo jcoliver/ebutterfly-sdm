@@ -8,10 +8,11 @@
 # processing to extract taxon_id values
 
 INFILE="../data/gbif/verbatim.txt"
+TMP="verbatim-temp.txt"
 OUTFILE="../data/gbif/verbatim-butterflies.txt"
 
 # Get header row for our output file
-head -n1 $INFILE > $OUTFILE
+head -n1 $INFILE > $TMP
 
 # Iterate over all families and copy those lines to output file
 FAMILIES=("Hesperiidae" "Papilionidae" "Pieridae" "Nymphalidae" "Lycaenidae" "Riodinidae")
@@ -19,6 +20,10 @@ for FAMILY in "${FAMILIES[@]}";
 do
   echo "Processing $FAMILY"
   # grep $FAMILY $INFILE | wc -l
-  grep $FAMILY $INFILE >> $OUTFILE
+  grep $FAMILY $INFILE >> $TMP
 done
 
+# Fix one broken line; one record has an unmatched double quotation mark:
+# "2014-04-10 10:30:00
+sed 's/\"2014-04-10 10:30:00/\"2014-04-10 10:30:00\"/g' $TMP > $OUTFILE
+rm $TMP
