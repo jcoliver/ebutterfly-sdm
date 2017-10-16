@@ -20,14 +20,23 @@ Four additional R packages are required:
     + 509627-iNaturalist.txt: Western Giant Swallowtail, _Papilio rumiko_
     + 59125-iNaturalist.txt: Great Copper, _Lycaena xanthoides_
   + wc2-5: climate data at 2.5 minute resolution from [WorldClim](http://www.worldclim.org)
+  + gbif: data harvested from GBIF for iNaturalist taxon_id values; most files
+  _not_ under version control (> 2GB each);
+    + taxon-ids.txt: tab-delimited text files of unique species-level taxon_id
+    values for records from Canada, Mexico, and United States; incluedes two
+    columns: `taxonID` and `scientificName`
 + output (not included in repository, but this structure is assumed on local)
   + images
   + rasters
 + scripts
+  + gbif-butterflies.sh: First pass of processing GBIF data dump to get taxon_ids
+  for iNaturalist data; see also get-taxon-id-from-gbif.py
   + get-observation-data.R: Harvest data from iNaturalist using their API; 
   called from command line terminal
     + Usage: `Rscript --vanilla get-observation-data.R <taxon_id>`
     + Example: `Rscript --vanilla get-observation-data.R 60606`
+  + get-taxon-id-from-gbif.py: Extract relevant taxon_id values from GBIF data 
+  dump; see also gbif-butterflies.sh. Produces data/gbif/taxon-ids.txt
   + run-sdm.R: Run species distribution model and create map and raster output; 
   called from command line terminal
     + Usage: `Rscript --vanilla run-sdm.R <path/to/data/file> <output-file-prefix> <path/to/output/directory/>`
@@ -64,10 +73,13 @@ Among other fields, the ones we will be interested in are:
 
 + countryCode: We want US, CA, and MX records only
 + taxonID: This field has values to use in the taxon_id field in the iNaturalist API
-+ order: For a first-pass filtration on Lepidoptera
-+ family: Because the suborder Papilionoidea is not supported, we will have to do 
-filtration for multiple values (Hesperiidae, Papilionidae, Pieridae, etc.)
++ scientificName: The name of the organism
 
+**Update**: the file data/gbif/taxon-ids.txt has the taxonID and scientificName 
+field values. However, the data are for observations of _species_ rank; that is, 
+subspecies taxon IDs were not recorded. Will need to see if the API will return 
+observations for a species-level taxon ID if an identification has been made at 
+the subspecies level.
 
 ## Resources
 ### Species distribution models in R
