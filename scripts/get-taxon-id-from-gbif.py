@@ -10,11 +10,12 @@
 # Note a significant discrepancy exists between the number of lines in the
 # input file (184180) and the number of rows in the dataframe (183770).
 
+# Will ultimately want unique taxonID and scientificName fields for butterflies
+# from Canada, Mexico, and USA
+
 import io
 import os
 import pandas as pd
-
-infile = "../data/gbif/verbatim-butterflies.txt"
 
 def read_file(filename, delimiter = "\t"):
     if os.path.exists(infile):
@@ -24,7 +25,46 @@ def read_file(filename, delimiter = "\t"):
         return(file_data)
     else:
         return(None)
+# end read_file
 
+def families():
+    family_list = ["Hesperiidae",
+    "Papilionidae",
+    "Pieridae",
+    "Nympalidae",
+    "Lycaenidae",
+    "Riodinidae"]
+    return(family_list)
+# end families
+
+def countries():
+    country_list = ["CA", "MX", "US"]
+    return(country_list)
+# end countries
+
+
+infile = "../data/gbif/verbatim-butterflies.txt"
+outfile = "../data/gbif/taxon-ids.txt"
+
+# Read the file in; report size
 butterflies_df = read_file(infile)
+print("Read in: " + str(len(butterflies_df)) + " records")
 
-print(len(butterflies_df))
+# Select only those records that are actually in buttefly families; report size
+butterflies_df = butterflies_df[butterflies_df['family'].isin(families())]
+print("Keeping " + str(len(butterflies_df)) + " butterfly family records")
+
+# Select only those records that are in countries of interest; report size
+butterflies_df = butterflies_df[butterflies_df['countryCode'].isin(countries())]
+print("Keeping " + str(len(butterflies_df)) + " records from North America")
+
+# Keep only those records of species rank; report size
+butterflies_df = butterflies_df[butterflies_df['taxonRank'] == "species"]
+print("Keeping " + str(len(butterflies_df)) + " species rank records")
+
+# Keep only unique taxonID records; report size
+butterflies_df = butterflies_df.drop_duplicates('taxonID')
+print("Keeping " + str(len(butterflies_df)) + " unique taxonID records")
+
+export_df = butterflies_df[['taxonID', 'scientificName']]
+export_df.to_csv(path_or_buf = outfile, sep = "\t", index = False, encoding = "utf-8")
