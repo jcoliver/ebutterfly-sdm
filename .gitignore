@@ -2,6 +2,7 @@
 data/cropped-bioclim-2.5.grd
 data/wc2-5
 data/gbif
+!data/gbif/taxon-ids.txt
 output/*
 !*.gitkeep
 !output/*/
