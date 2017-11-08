@@ -58,7 +58,7 @@ if (any(write.access != 0)) {
 }
 
 # Load dependancies, keeping track of any that fail
-required.packages <- c("raster", "sp", "dismo", "maptools")
+required.packages <- c("rgdal", "raster", "sp", "dismo", "maptools")
 missing.packages <- character(0)
 for (one.package in required.packages) {
   if (!suppressMessages(require(package = one.package, character.only = TRUE))) {
@@ -69,93 +69,65 @@ for (one.package in required.packages) {
 if (length(missing.packages) > 0) {
   stop(paste0("Missing one or more required packages. The following packages are required for run-sdm: ", paste(missing.packages, sep = "", collapse = ", ")), ".\n")
 }
+rm(one.package, required.packages, missing.packages)
+
+# Load functions from files in functions directory
+functions <- list.files(path = "functions", pattern = ".R", full.names = TRUE)
+for(f in 1:length(functions)) {
+  source(file = functions[f])
+}
+rm(f, functions)
+
+################################################################################
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+# TESTING ONLY; REMOVE
+
+infile <- "data/inaturalist/59125-iNaturalist.csv"
+outprefix <- "59125"
+outpath <- "output/"
+bg.replicates <- 50
+rep.threshold <- 0.5
+
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+################################################################################
 
 ################################################################################
 # DATA
-# Read in raw data
-# Extract data of interest
-# Data cleanup and extent
-# Create pseudo-absence points
-iNaturalist.data <- read.csv(file = infile,
-                             stringsAsFactors = FALSE)
-if (!(any(colnames(iNaturalist.data) == "longitude") 
-    && any(colnames(iNaturalist.data) == "latitude"))) {
-  stop("Missing required column(s); input file must have 'latitude' and 'longitude' columns.\n")
-}
-
-obs.data <- iNaturalist.data[, c("longitude", "latitude")]
-colnames(obs.data) <- c("lon", "lat")
-
-# Remove duplicate rows
-duplicate.rows <- duplicated(x = obs.data)
-obs.data <- obs.data[!duplicate.rows, ]
-
-# Determine geographic extent of our data
-max.lat = ceiling(max(obs.data$lat))
-min.lat = floor(min(obs.data$lat))
-max.lon = ceiling(max(obs.data$lon))
-min.lon = floor(min(obs.data$lon))
-geographic.extent <- extent(x = c(min.lon, max.lon, min.lat, max.lat))
-
-# Get the biolim data
-bioclim.data <- getData(name = "worldclim",
-                        var = "bio",
-                        res = 2.5, # Could try for better resolution, 0.5, but would then need to provide lat & long...
-                        path = "data/")
-bioclim.data <- crop(x = bioclim.data, y = geographic.extent)
-
-# Create pseudo-absence points (making them up, using 'background' approach)
-raster.files <- list.files(path = paste0(system.file(package = "dismo"), "/ex"),
-                           pattern = "grd", full.names = TRUE)
-mask <- raster(raster.files[1])
-
-# Random points for background (same number as our observed points)
+# Read data and set rng seed
+obs.data <- PrepareData(file = infile)
 set.seed(19470909)
-background.points <- randomPoints(mask = mask, n = nrow(obs.data), ext = geographic.extent, extf = 1.25)
-colnames(background.points) <- c("lon", "lat")
-
-# Data for observation sites (presence and background)
-presence.values <- extract(x = bioclim.data, y = obs.data)
-absence.values <- extract(x = bioclim.data, y = background.points)
 
 ################################################################################
 # ANALYSIS
-# Divide data into testing and training
-# Run SDM
-# Save graphics and raster files
+# Run modeling and extract rasters
+species.rasters <- SDMBioclim(data = data, bg.replicates = bg.replicates)
+presence.raster <- species.rasters$presence
+presence.raster <- presence.raster > bg.replicates * rep.threshold
+presence.raster[presence.raster <= 0] <- NA
+probabilities.raster <- species.rasters$probabilities
+probabilities.raster[probabilities.raster <= 0] <- NA
 
-# Separate training & testing data
-group.presence <- kfold(obs.data, 5)
-testing.group <- 1
-presence.train <- obs.data[group.presence != testing.group, ]
-presence.test <- obs.data[group.presence == testing.group, ]
-group.background <- kfold(background.points, 5)
-background.train <- background.points[group.background != testing.group, ]
-background.test <- background.points[group.background == testing.group, ]
+################################################################################
+# OUTPUT
+# Save graphics image of presence/absence
+# Save rasters of presence/absence and occurrence probabilities
 
-# Do species distribution modeling
-sdm.model <- bioclim(x = bioclim.data, p = presence.train)
-sdm.model.eval <- evaluate(p = presence.test, 
-                           a = background.test, 
-                           model = sdm.model, 
-                           x = bioclim.data)
-sdm.model.threshold <- threshold(x = sdm.model.eval, 
-                                 stat = "spec_sens")
-predict.presence <- predict(x = bioclim.data, 
-                            object = sdm.model, 
-                            ext = geographic.extent, 
-                            progress = "")
+# TODO add check in MinMaxCoordinates for df/list with lat/long columns
+min.max <- MinMaxCoordinates(x = obs.data)
 
 # Save image to file
 data(wrld_simpl) # Need this for the map
-png(filename = paste0(outpath, outprefix, "-prediction.png"))
+png.name <- paste0(outpath, outprefix, "-prediction.png")
+png(filename = png.name)
 par(mar = c(3, 3, 3, 1) + 0.1)
 plot(wrld_simpl, 
-     xlim = c(min.lon, max.lon), 
-     ylim = c(min.lat, max.lat), 
+     xlim = c(min.max["min.lon"], min.max["max.lon"]), 
+     ylim = c(min.max["min.lat"], min.max["max.lat"]), 
      col = "#F2F2F2",
      axes = TRUE)
-plot(predict.presence > sdm.model.threshold, 
+plot(presence.raster, 
      main = "Presence/Absence",
      legend = FALSE,
      add = TRUE)
@@ -169,12 +141,12 @@ par(mar = c(5, 4, 4, 2) + 0.1)
 dev.off()
 
 # Save raster to files
-suppressMessages(writeRaster(x = predict.presence, 
+suppressMessages(writeRaster(x = probabilities.raster, 
                              filename = paste0(outpath, outprefix, "-prediction.grd"),
                              format = "raster",
                              overwrite = TRUE))
 
-suppressMessages(writeRaster(x = predict.presence > sdm.model.threshold, 
+suppressMessages(writeRaster(x = presence.raster, 
                              filename = paste0(outpath, outprefix, "-prediction-threshold.grd"),
                              format = "raster",
                              overwrite = TRUE))
