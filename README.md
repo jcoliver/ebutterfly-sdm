@@ -8,6 +8,7 @@ would also use data from the [eButterfly](http://www.e-butterfly.org) project.
 ## Dependancies
 Four additional R packages are required:
 
++ rgdal
 + raster
 + sp
 + dismo
