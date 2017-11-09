@@ -10,7 +10,7 @@ rm(list = ls())
 # Gather path information
 # Load dependancies
 args = commandArgs(trailingOnly = TRUE)
-usage.string <- "Usage: Rscript --vanilla run-sdm.R <path/to/data/file> <output-file-prefix> <path/to/output/directory/>"
+usage.string <- "Usage: Rscript --vanilla run-sdm.R <path/to/data/file> <output-file-prefix> <path/to/output/directory/> <number of background replicates>[optional] <threshold for occurrance>[optional]"
 
 # Make sure a readable file is first argument
 if (length(args) < 1) {
@@ -43,6 +43,7 @@ if (length(args) < 3) {
              sep = "\n"))
 }
 outpath <- args[3]
+
 # Make sure the path ends with "/"
 if (substring(text = outpath, first = nchar(outpath), last = nchar(outpath)) != "/") {
   outpath <- paste0(outpath, "/")
@@ -56,6 +57,26 @@ if (any(write.access != 0)) {
               "The following directories do not appear writable: \n",
               paste(required.writables[write.access != 0], collapse = "\n")))
 }
+
+# Check number of background replicates is ok (if provided)
+bg.replicates <- 50
+rep.threshold <- 0.5
+if (length(args) > 3) {
+  temp.reps <- as.integer(args[4])
+  if (!is.na(temp.reps)) {
+    bg.replicates <- temp.reps
+  }
+  
+  # Check threshold (if provided)
+  if (length(args) > 4) {
+    temp.threshold <- args[5]
+    if (is.numeric(temp.threshold) && temp.threshold > 0.0 && temp.threshold <= 1.0) {
+      rep.threshold <- temp.threshold
+    }
+  }
+}
+
+
 
 # Load dependancies, keeping track of any that fail
 required.packages <- c("rgdal", "raster", "sp", "dismo", "maptools")
@@ -79,21 +100,6 @@ for(f in 1:length(functions)) {
 rm(f, functions)
 
 ################################################################################
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
-# TESTING ONLY; REMOVE
-
-infile <- "data/inaturalist/59125-iNaturalist.csv"
-outprefix <- "59125"
-outpath <- "output/"
-bg.replicates <- 50
-rep.threshold <- 0.5
-
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
-################################################################################
-
-################################################################################
 # DATA
 # Read data and set rng seed
 obs.data <- PrepareData(file = infile)
@@ -102,7 +108,7 @@ set.seed(19470909)
 ################################################################################
 # ANALYSIS
 # Run modeling and extract rasters
-species.rasters <- SDMBioclim(data = data, bg.replicates = bg.replicates)
+species.rasters <- SDMBioclim(data = obs.data, bg.replicates = bg.replicates)
 presence.raster <- species.rasters$presence
 presence.raster <- presence.raster > bg.replicates * rep.threshold
 presence.raster[presence.raster <= 0] <- NA
@@ -114,7 +120,6 @@ probabilities.raster[probabilities.raster <= 0] <- NA
 # Save graphics image of presence/absence
 # Save rasters of presence/absence and occurrence probabilities
 
-# TODO add check in MinMaxCoordinates for df/list with lat/long columns
 min.max <- MinMaxCoordinates(x = obs.data)
 
 # Save image to file
@@ -130,7 +135,9 @@ plot(wrld_simpl,
 plot(presence.raster, 
      main = "Presence/Absence",
      legend = FALSE,
-     add = TRUE)
+     add = TRUE,
+     col = c("forestgreen"))
+
 # Redraw borders
 plot(wrld_simpl,
      add = TRUE,

@@ -18,7 +18,7 @@ MinMaxCoordinates <- function(x) {
   min.lat <- 90
   max.lon <- -180
   min.lon <- 180
-  
+
   # Iterate over all elements of list x and find min/max values
   for (i in 1:length(x)) {
     max.lat = ceiling(max(x[[i]]$lat, max.lat))
@@ -77,6 +77,7 @@ SDMBioclim <- function(data, bg.replicates = 10) {
 
   probability.raster <- NA
   presence.raster <- NA
+  
   for (rep in 1:bg.replicates) {
     # Random points for background (same number as our observed points)
     background.points <- randomPoints(mask = mask, n = nrow(data), ext = geographic.extent, extf = 1.25)
