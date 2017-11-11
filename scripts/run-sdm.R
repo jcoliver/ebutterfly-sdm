@@ -69,8 +69,8 @@ if (length(args) > 3) {
   
   # Check threshold (if provided)
   if (length(args) > 4) {
-    temp.threshold <- args[5]
-    if (is.numeric(temp.threshold) && temp.threshold > 0.0 && temp.threshold <= 1.0) {
+    temp.threshold <- as.numeric(args[5])
+    if (!is.na(temp.threshold) && temp.threshold > 0.0 && temp.threshold <= 1.0) {
       rep.threshold <- temp.threshold
     }
   }
