@@ -1,4 +1,3 @@
-
 # Extract iNaturalist taxon ids from GBIF records
 # Jeff Oliver
 # jcoliver@email.arizona.edu
@@ -31,7 +30,7 @@ def families():
     family_list = ["Hesperiidae",
     "Papilionidae",
     "Pieridae",
-    "Nympalidae",
+    "Nymphalidae",
     "Lycaenidae",
     "Riodinidae"]
     return(family_list)
