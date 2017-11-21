@@ -130,3 +130,37 @@ SDMBioclim <- function(data, bg.replicates = 10) {
   probability.raster <- probability.raster/bg.replicates
   return(list(probabilities = probability.raster, presence = presence.raster))
 }
+
+################################################################################
+#' Run species distribution model for specific algorithm
+#' 
+#' @param data data.frame with "lon" and "lat" values
+#' @param env.data Raster* object of predictor variables
+#' @param sdm.algorithm character indicating algorithm to use (either "CTA", 
+#' "RF", or "GLM")
+#' @param bg.replicates integer number of replicates to run
+SDMAlgos <- function(data, env.data, sdm.algorithm = "CTA", bg.replicates = 10) {
+  # SSDM require
+  
+  probability.raster <- NA
+  presence.raster <- NA
+  
+  for (rep in 1:bg.replicates) {
+    sdm <- modelling(algorithm = sdm.algorithm, 
+                     Occurrences = obs.data, 
+                     Env = bioclim.data,
+                     Xcol = "longitude",
+                     Ycol = "latitude")
+    
+    if (rep == 1) {
+      probability.raster <- sdm@projection
+      presence.raster <- sdm@binary
+    } else {
+      probability.raster <- mosaic(x = probability.raster, y = sdm@projection, fun = sum, na.rm = TRUE)
+      presence.raster <- mosaic(x = presence.raster, y = sdm@binary, fun = sum, na.rm = TRUE)
+    }
+  }
+  
+  probability.raster <- probability.raster/bg.replicates
+  return(list(probabilities = probability.raster, presence = presence.raster))
+}
