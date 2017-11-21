@@ -157,8 +157,8 @@ png.name <- paste0(outpath, outprefix, "-", sdm.algorithm, "-prediction.png")
 png(filename = png.name)
 par(mar = c(3, 3, 3, 1) + 0.1)
 plot(wrld_simpl, 
-     xlim = c(obs.min.max["min.lon"], obs.min.max["max.lon"]), 
-     ylim = c(obs.min.max["min.lat"], obs.min.max["max.lat"]), 
+     xlim = c(min.max["min.lon"], min.max["max.lon"]), 
+     ylim = c(min.max["min.lat"], min.max["max.lat"]), 
      col = "#F2F2F2",
      axes = TRUE)
 plot(presence.raster, 
