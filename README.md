@@ -44,11 +44,11 @@ Seven additional R packages are required:
   + run-sdm.R: Run species distribution model and create map and raster output; 
   called from command line terminal
     + Usage: `Rscript --vanilla run-sdm.R <path/to/data/file> <output-file-prefix> <path/to/output/directory/> <number of background replicates>[optional] <threshold for occurrance>[optional]`
-    + Example: `Rscript --vanilla run-sdm.R data/inaturalist/60606-iNaturalist.txt 60606 output/ 50 0.5`
+    + Example: `Rscript --vanilla run-sdm.R data/inaturalist/60606-iNaturalist.csv 60606 output/ 50 0.5`
   + run-sdm-algo.R: Run species distribution model, choosing among three algorithms (CTA, RF, or GLM)
   and create map and raster output; called from command line terminal
     + Usage: `Rscript --vanilla run-sdm-algo.R <path/to/data/file> <output-file-prefix> <path/to/output/directory/> <algorithm string: CTA, GLM, or RF>[optional] <number of background replicates>[optional] <threshold for occurrance>[optional]`
-    + Example: `Rscript --vanilla run-sdm-algo.R data/inaturalist/60606-iNaturalist.txt 60606 output/ CTA 10 0.7`
+    + Example: `Rscript --vanilla run-sdm-algo.R data/inaturalist/60606-iNaturalist.csv 60606 output/ CTA 10 0.7`
   + sdm-for-ACIC-lecture.R: Script to create map graphic used in ACIC lecture
   + sdm-iNat-melinus.R: Pilot species distribution modeling for _Strymon melinus_
   + sdm-iNat-xanthoides.R: Pilot species distribution modeling for _Lycaena xanthoides_
