@@ -164,3 +164,32 @@ SDMAlgos <- function(data, env.data, sdm.algorithm = "CTA", bg.replicates = 10) 
   probability.raster <- probability.raster/bg.replicates
   return(list(probabilities = probability.raster, presence = presence.raster))
 }
+
+################################################################################
+#' Combine raster files to single layer
+#' 
+StackSDMs <- function(raster.files) {
+  if (!require("raster")){
+    stop("StackSDMs requires raster package, but package is missing")
+  }
+  if (!require("maptools")){
+    stop("StackSDMs requires maptools package, but package is missing")
+  }
+
+  raster.mosaic <- raster(x = raster.files[1])
+  raster.mosaic[raster.mosaic <= 0] <- NA
+
+  if (length(raster.files) > 1) {
+    for (f in 2:length(raster.files)) {
+      raster.2 <- raster(x = raster.files[f])
+      raster.2[raster.2 <= 0] <- NA
+      xmin <- min(extent(raster.mosaic)[1], extent(raster.2)[1])
+      xmax <- max(extent(raster.mosaic)[2], extent(raster.2)[2])
+      ymin <- min(extent(raster.mosaic)[3], extent(raster.2)[3])
+      ymax <- max(extent(raster.mosaic)[4], extent(raster.2)[4])
+      raster.mosaic <- mosaic(x = raster.mosaic, y = raster.2, fun = sum)
+      raster.mosaic[raster.mosaic <= 0] <- NA
+    }
+  }
+  return(raster.mosaic)
+}
