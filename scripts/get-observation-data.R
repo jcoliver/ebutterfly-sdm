@@ -57,7 +57,7 @@ if (nrow(obs.data) > 0) {
   if (!dir.exists("data/inaturalist")) {
     dir.create("data/inaturalist")
   }
-  outfile <- paste0("data/inaturalist/", inat.taxon.id, "-iNaturalist.txt")
+  outfile <- paste0("data/inaturalist/", inat.taxon.id, "-iNaturalist.csv")
   write.csv(x = obs.data, 
             file = outfile,
             row.names = FALSE,
