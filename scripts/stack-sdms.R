@@ -10,7 +10,7 @@ rm(list = ls())
 # Gather path information
 # Load dependancies
 args = commandArgs(trailingOnly = TRUE)
-usage.string <- "Usage: Rscript --vanilla stack-sdms.R <path/to/raster/files> <output-file-prefix> <path/to/output/directory/>"
+usage.string <- "Usage: Rscript --vanilla scripts/stack-sdms.R <path/to/raster/files> <output-file-prefix> <path/to/output/directory/>"
 
 # Make sure a readable file is first argument
 if (length(args) < 1) {

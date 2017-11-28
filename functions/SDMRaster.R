@@ -68,7 +68,7 @@ SDMBioclim <- function(data, bg.replicates = 10) {
   #                            pattern = "grd", full.names = TRUE)
   # mask <- raster(raster.files[1])
   bil.files <- list.files(path = "data/wc2-5/", 
-                          pattern = "*.bil", 
+                          pattern = "*.bil$", 
                           full.names = TRUE)
   mask <- raster(bil.files[1])
 

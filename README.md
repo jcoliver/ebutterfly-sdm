@@ -38,8 +38,8 @@ Seven additional R packages are required:
   for iNaturalist data; see also get-taxon-id-from-gbif.py
   + get-observation-data.R: Harvest data from iNaturalist using their API; 
   called from command line terminal
-    + Usage: `Rscript --vanilla get-observation-data.R <taxon_id>`
-    + Example: `Rscript --vanilla get-observation-data.R 60606`
+    + Usage: `Rscript --vanilla scripts/get-observation-data.R <taxon_id>`
+    + Example: `Rscript --vanilla scripts/get-observation-data.R 60606`
   + get-taxon-id-from-gbif.py: Extract relevant taxon_id values from GBIF data 
   dump; see also gbif-butterflies.sh. Produces data/gbif/taxon-ids.txt
   + run-sdm.R: Run species distribution model and create map and raster output; 
@@ -48,13 +48,13 @@ Seven additional R packages are required:
     + Example: `Rscript --vanilla scripts/run-sdm.R data/inaturalist/60606-iNaturalist.csv 60606 output/ 50 0.5`
   + run-sdm-algo.R: Run species distribution model, choosing among three algorithms (CTA, RF, or GLM)
   and create map and raster output; called from command line terminal
-    + Usage: `Rscript --vanilla run-sdm-algo.R <path/to/data/file> <output-file-prefix> <path/to/output/directory/> <algorithm string: CTA, GLM, or RF>[optional] <number of background replicates>[optional] <threshold for occurrance>[optional]`
+    + Usage: `Rscript --vanilla scripts/run-sdm-algo.R <path/to/data/file> <output-file-prefix> <path/to/output/directory/> <algorithm string: CTA, GLM, or RF>[optional] <number of background replicates>[optional] <threshold for occurrance>[optional]`
     + Example: `Rscript --vanilla scripts/run-sdm-algo.R data/inaturalist/60606-iNaturalist.csv 60606 output/ CTA 10 0.7`
   + sdm-for-ACIC-lecture.R: Script to create map graphic used in ACIC lecture
   + sdm-iNat-melinus.R: Pilot species distribution modeling for _Strymon melinus_
   + sdm-iNat-xanthoides.R: Pilot species distribution modeling for _Lycaena xanthoides_
   + stack-sdms.R: Stack multiple SDMs from multiple species into species richness map
-    + Usage: `Usage: Rscript --vanilla stack-sdms.R <path/to/raster/files> <output-file-prefix> <path/to/output/directory/>`
+    + Usage: `Usage: Rscript --vanilla scripts/stack-sdms.R <path/to/raster/files> <output-file-prefix> <path/to/output/directory/>`
     + Example: `Usage: Rscript --vanilla scripts/stack-sdms.R output richness output/`
 
 ## General initial approach:

@@ -5,7 +5,7 @@
 
 ################################################################################
 args = commandArgs(trailingOnly = TRUE)
-usage.string <- "Usage: Rscript --vanilla get-observation-data.R <taxon_id>"
+usage.string <- "Usage: Rscript --vanilla scripts/get-observation-data.R <taxon_id>"
 
 if (length(args) < 1) {
   stop(paste("get-observation-data requires a numerical taxon id", 

@@ -10,7 +10,7 @@ rm(list = ls())
 # Gather path information
 # Load dependancies
 args = commandArgs(trailingOnly = TRUE)
-usage.string <- "Usage: Rscript --vanilla run-sdm.R <path/to/data/file> <output-file-prefix> <path/to/output/directory/> <number of background replicates>[optional] <threshold for occurrance>[optional]"
+usage.string <- "Usage: Rscript --vanilla scripts/run-sdm.R <path/to/data/file> <output-file-prefix> <path/to/output/directory/> <number of background replicates>[optional] <threshold for occurrance>[optional]"
 
 # Make sure a readable file is first argument
 if (length(args) < 1) {
