@@ -40,6 +40,9 @@ Seven additional R packages are required:
   called from command line terminal
     + Usage: `Rscript --vanilla scripts/get-observation-data.R <taxon_id>`
     + Example: `Rscript --vanilla scripts/get-observation-data.R 60606`
+    + Output: Comma-separated file (csv) of observations from iNaturalist
+      + Filename: `data/inaturalist/<taxon_id>-iNaturalist.csv`
+      + Example: `data/inaturalist/60606-iNaturalist.csv`
   + get-taxon-id-from-gbif.py: Extract relevant taxon_id values from GBIF data 
   dump; see also gbif-butterflies.sh. Produces data/gbif/taxon-ids.txt
   + run-sdm.R: Run species distribution model and create map and raster output; 
