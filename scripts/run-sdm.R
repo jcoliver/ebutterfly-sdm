@@ -124,7 +124,7 @@ min.max <- MinMaxCoordinates(x = obs.data)
 
 # Save image to file
 data(wrld_simpl) # Need this for the map
-png.name <- paste0(outpath, outprefix, "-prediction.png")
+png.name <- paste0(outpath, outprefix, "-prediction-", as.character(bg.replicates), ".png")
 png(filename = png.name)
 par(mar = c(3, 3, 3, 1) + 0.1)
 plot(wrld_simpl, 
@@ -149,12 +149,12 @@ dev.off()
 
 # Save raster to files
 suppressMessages(writeRaster(x = probabilities.raster, 
-                             filename = paste0(outpath, outprefix, "-prediction.grd"),
+                             filename = paste0(outpath, outprefix, "-prediction-", as.character(bg.replicates), ".grd"),
                              format = "raster",
                              overwrite = TRUE))
 
 suppressMessages(writeRaster(x = presence.raster, 
-                             filename = paste0(outpath, outprefix, "-prediction-threshold.grd"),
+                             filename = paste0(outpath, outprefix, "-prediction-threshold-", as.character(bg.replicates), ".grd"),
                              format = "raster",
                              overwrite = TRUE))
 cat("Finished with file writing.\n")

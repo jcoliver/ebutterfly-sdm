@@ -95,3 +95,9 @@ plot(stacked.SDMs, add = TRUE, col = rev(topo.colors(100)), legend = FALSE)
 plot(wrld_simpl, xlim = c(xmin, xmax), ylim = c(ymin, ymax), add = TRUE, border = "gray10", col = NA)
 box()
 dev.off()
+
+# Save raster to files
+suppressMessages(writeRaster(x = stacked.SDMs, 
+                             filename = paste0(outpath, outprefix, "-stack.grd"),
+                             format = "raster",
+                             overwrite = TRUE))

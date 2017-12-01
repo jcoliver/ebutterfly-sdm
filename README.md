@@ -46,16 +46,45 @@ Seven additional R packages are required:
   called from command line terminal
     + Usage: `Rscript --vanilla scripts/run-sdm.R <path/to/data/file> <output-file-prefix> <path/to/output/directory/> <number of background replicates>[optional] <threshold for occurrance>[optional]`
     + Example: `Rscript --vanilla scripts/run-sdm.R data/inaturalist/60606-iNaturalist.csv 60606 output/ 50 0.5`
+    + Output: Three files:
+      + A png-formatted graphics file showing predicted distribution
+        + Filename: `<path/to/output/directory/>/<output-file-prefix>-prediction-<number of background replicates>.png`
+        + Example: `output/60606-prediction-50.png`
+      + A pair of raster files (.grd) with:
+        + The predicted distribution (presence/absence)
+          + Filename: `<path/to/output/directory/>/<output-file-prefix>-prediction-threshold-<number of background replicates>.grd`
+          + Example: `output/60606-prediction-threshold-50.grd`
+        + The probability of occurrence (scaled between 0 and 1)
+          + Filename: `<path/to/output/directory/>/<output-file-prefix>-prediction-<number of background replicates>.grd`
+          + Example: `output/60606-prediction-50.grd`
   + run-sdm-algo.R: Run species distribution model, choosing among three algorithms (CTA, RF, or GLM)
   and create map and raster output; called from command line terminal
     + Usage: `Rscript --vanilla run-sdm-algo.R <path/to/data/file> <output-file-prefix> <path/to/output/directory/> <algorithm string: CTA, GLM, or RF>[optional] <number of background replicates>[optional] <threshold for occurrance>[optional]`
     + Example: `Rscript --vanilla scripts/run-sdm-algo.R data/inaturalist/60606-iNaturalist.csv 60606 output/ CTA 10 0.7`
+    + Output: Three files:
+      + A png-formatted graphics file showing predicted distribution
+        + Filename: `<path/to/output/directory/>/<output-file-prefix>-prediction-<algorithm string>-<number of background replicates>.png`
+        + Example: `output/60606-prediction-CTA-50.png`
+      + A pair of raster files (.grd) with:
+        + The predicted distribution (presence/absence)
+          + Filename: `<path/to/output/directory/>/<output-file-prefix>-prediction-threshold-<algorithm string>-<number of background replicates>.grd`
+          + Example: `output/60606-prediction-threshold-CTA-50.grd`
+        + The probability of occurrence (scaled between 0 and 1)
+          + Filename: `<path/to/output/directory/>/<output-file-prefix>-prediction-<algorithm string>-<number of background replicates>.grd`
+          + Example: `output/60606-prediction-CTA-50.grd`
   + sdm-for-ACIC-lecture.R: Script to create map graphic used in ACIC lecture
   + sdm-iNat-melinus.R: Pilot species distribution modeling for _Strymon melinus_
   + sdm-iNat-xanthoides.R: Pilot species distribution modeling for _Lycaena xanthoides_
   + stack-sdms.R: Stack multiple SDMs from multiple species into species richness map
     + Usage: `Usage: Rscript --vanilla stack-sdms.R <path/to/raster/files> <output-file-prefix> <path/to/output/directory/>`
     + Example: `Usage: Rscript --vanilla scripts/stack-sdms.R output richness output/`
+    + Output: Two files:
+      + A png-formatted graphics file showing species richness (i.e. # species) on map of North America
+        + Filename: `<path/to/output/directory/>/<output-file-prefix>-stack.png`
+        + Example: `output/richness-stack.png`
+      + A raster file (.grd) with species richness
+        + Filename: `<path/to/output/directory/>/<output-file-prefix>-stack.grd`
+        + Example: `output/richness-stack.grd`
 
 ## General initial approach:
 
