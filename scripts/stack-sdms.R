@@ -20,7 +20,7 @@ if (length(args) < 1) {
 }
 
 raster.path <- args[1]
-raster.files <- list.files(path = raster.path, pattern = "threshold.grd$", full.names = TRUE)
+raster.files <- list.files(path = raster.path, pattern = ".grd$", full.names = TRUE)
 if (length(raster.files) < 1) {
   stop(paste0("No raster files (.grd) found in path: ", raster.path))
 }
